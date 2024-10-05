@@ -64,3 +64,18 @@ func (service *GroceryService) UpdateGrocery(id int, description string) (*domai
 
 	return grocery, nil
 }
+
+func (service *GroceryService) MarkGrocery(id int, status string) (*domain.Grocery, error) {
+	if status != "" && status != "done" && status != "in-progress" && status != "todo" {
+		return nil, errors.New("status is invalid")
+	}
+
+	grocery, err := service.groceryRepository.MarkGrocery(id, status)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return grocery, nil
+
+}

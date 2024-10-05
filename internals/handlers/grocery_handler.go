@@ -150,3 +150,19 @@ func (handler *GroceryHandler) UpdateGrocery(cmd *cobra.Command, argId string, a
 
 	fmt.Println(table)
 }
+
+func (handler *GroceryHandler) MarkGrocery(cmd *cobra.Command, argId string, argStatus string) {
+	id, err := strconv.Atoi(argId)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	grocery, err := handler.groceryService.MarkGrocery(id, argStatus)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("Grocery item with description %s has been marked to %s.", grocery.Description, argStatus)
+}

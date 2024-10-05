@@ -134,6 +134,39 @@ func (repository *GroceryRepository) UpdateGrocery(id int, description string) (
 	return currGrocery, nil
 }
 
+func (repository *GroceryRepository) MarkGrocery(id int, status string) (*domain.Grocery, error) {
+	groceries, err := repository.loadDb()
+
+	if err != nil {
+		return nil, err
+	}
+
+	currGrocery := find(groceries, func(item domain.Grocery, _ int) bool {
+		return item.Id == id
+	})
+
+	if currGrocery == nil {
+		return nil, errors.New("item not found")
+	}
+
+	currGrocery.Status = status
+	currGrocery.UpdatedAt = time.Now()
+
+	for idx := range groceries {
+		if groceries[idx].Id == id {
+			groceries[idx] = *currGrocery
+		}
+	}
+
+	err = repository.saveDb(groceries)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return currGrocery, nil
+}
+
 func (repository *GroceryRepository) loadDb() ([]domain.Grocery, error) {
 	file, err := os.Open(repository.filepath)
 
