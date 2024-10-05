@@ -50,3 +50,13 @@ func (service *GroceryService) DeleteGrocery(id int) error {
 
 	return nil
 }
+
+func (service *GroceryService) UpdateGrocery(id int, description string) (*domain.Grocery, error) {
+	grocery, err := service.groceryRepository.UpdateGrocery(id, description)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return grocery, nil
+}

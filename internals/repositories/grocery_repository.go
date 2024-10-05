@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/Ralfarios/go-grocery-list/internals/domain"
 	"github.com/Ralfarios/go-grocery-list/internals/ports"
@@ -23,6 +25,10 @@ func (repository *GroceryRepository) AddGrocery(description string, status strin
 	groceries, err := repository.loadDb()
 	if err != nil {
 		return nil, err
+	}
+
+	if len(strings.TrimSpace(description)) < 1 {
+		return nil, errors.New("please insert the description")
 	}
 
 	var id int
@@ -83,6 +89,43 @@ func (repository *GroceryRepository) DeleteGrocery(id int) error {
 	return nil
 }
 
+func (repository *GroceryRepository) UpdateGrocery(id int, description string) (*domain.Grocery, error) {
+	groceries, err := repository.loadDb()
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(strings.TrimSpace(description)) < 1 {
+		return nil, errors.New("please insert the description")
+	}
+
+	currGrocery := find(groceries, func(item domain.Grocery, _ int) bool {
+		return item.Id == id
+	})
+
+	if currGrocery == nil {
+		return nil, errors.New("item not found")
+	}
+
+	currGrocery.Description = description
+	currGrocery.UpdatedAt = time.Now()
+
+	for idx := range groceries {
+		if groceries[idx].Id == id {
+			groceries[idx] = *currGrocery
+		}
+	}
+
+	err = repository.saveDb(groceries)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return currGrocery, nil
+}
+
 func (repository *GroceryRepository) loadDb() ([]domain.Grocery, error) {
 	file, err := os.Open(repository.filepath)
 
@@ -112,6 +155,16 @@ func (repository *GroceryRepository) saveDb(groceries []domain.Grocery) error {
 	defer file.Close()
 
 	return json.NewEncoder(file).Encode(groceries)
+}
+
+func find[T any](values []T, cb func(item T, index int) bool) *T {
+	for idx, item := range values {
+		if cb(item, idx) {
+			return &item
+		}
+
+	}
+	return nil
 }
 
 func filter[T any](values []T, cb func(T) bool) (output []T, isExist bool) {
