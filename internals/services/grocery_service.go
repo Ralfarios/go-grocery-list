@@ -1,6 +1,8 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/Ralfarios/go-grocery-list/internals/domain"
 	"github.com/Ralfarios/go-grocery-list/internals/ports"
 )
@@ -33,4 +35,18 @@ func (service *GroceryService) GetAllGroceries() ([]domain.Grocery, error) {
 	}
 
 	return groceries, nil
+}
+
+func (service *GroceryService) DeleteGrocery(id int) error {
+	err := service.groceryRepository.DeleteGrocery(id)
+
+	if id < 1 {
+		return errors.New("id is invalid")
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
