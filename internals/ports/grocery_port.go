@@ -20,7 +20,7 @@ type GroceryRepository interface {
 }
 
 type GroceryHandler interface {
-	AddGrocery(cmd *cobra.Command, args []string)
+	AddGrocery(cmd *cobra.Command, argDescription string)
 	GetAllGroceries(cmd *cobra.Command, args []string)
 	DeleteGrocery(cmd *cobra.Command, args string)
 	UpdateGrocery(cmd *cobra.Command, argId string, argDescription string)

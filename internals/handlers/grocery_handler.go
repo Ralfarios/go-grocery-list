@@ -20,10 +20,8 @@ func NewGroceryHandler(service ports.GroceryService) *GroceryHandler {
 	return &GroceryHandler{groceryService: service}
 }
 
-func (handler *GroceryHandler) AddGrocery(cmd *cobra.Command, args []string) {
-	description, _ := cmd.Flags().GetString("description")
-
-	grocery, err := handler.groceryService.AddGrocery(description)
+func (handler *GroceryHandler) AddGrocery(cmd *cobra.Command, argDescription string) {
+	grocery, err := handler.groceryService.AddGrocery(argDescription)
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -18,7 +18,6 @@ func init() {
 	groceryHandler = handler.NewGroceryHandler(groceryService)
 
 	rootCmd.AddCommand(AddGroceryCmd, GetAllGroceriesCmd, DeleteGroceryCmd, EditGroceryCmd)
-	AddGroceryCmd.Flags().StringP("description", "d", "", "Describe the item that you want to add to the grocery list")
 	GetAllGroceriesCmd.Flags().StringP("status", "s", "", "Determine based on what status, default value is empty")
 }
 
@@ -28,9 +27,12 @@ var AddGroceryCmd = &cobra.Command{
 	Long: `Adding item to your grocery list by the description.
 For example:
 
-go-grocery-list add -d "Buy 2 eggs"`,
+go-grocery-list add "Buy 2 eggs"`,
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		groceryHandler.AddGrocery(cmd, args)
+		description := args[0]
+
+		groceryHandler.AddGrocery(cmd, description)
 	},
 }
 
