@@ -16,7 +16,6 @@ func NewGroceryService(repo ports.GroceryRepository) *GroceryService {
 }
 
 func (service *GroceryService) AddGrocery(description string) (*domain.Grocery, error) {
-
 	grocery, err := service.groceryRepository.AddGrocery(description, "todo")
 
 	if err != nil {

@@ -28,13 +28,13 @@ func NewGrocery(id int, description string, status string, created_at *time.Time
 	}
 	g.Status = status
 
-	if created_at.IsZero() {
+	if created_at == nil || created_at.IsZero() {
 		g.CreatedAt = time.Now()
 	} else {
 		g.CreatedAt = *created_at
 	}
 
-	if updated_at.IsZero() {
+	if updated_at == nil || updated_at.IsZero() {
 		g.UpdatedAt = time.Now()
 	} else {
 		g.UpdatedAt = *updated_at
