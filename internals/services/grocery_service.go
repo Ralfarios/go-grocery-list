@@ -27,8 +27,12 @@ func (service *GroceryService) AddGrocery(description string) (*domain.Grocery, 
 	return grocery, nil
 }
 
-func (service *GroceryService) GetAllGroceries() ([]domain.Grocery, error) {
-	groceries, err := service.groceryRepository.GetAllGroceries()
+func (service *GroceryService) GetAllGroceries(status string) ([]domain.Grocery, error) {
+	if status != "" && status != "done" && status != "in-progress" && status != "todo" {
+		return nil, errors.New("status is invalid")
+	}
+
+	groceries, err := service.groceryRepository.GetAllGroceries(status)
 
 	if err != nil {
 		return nil, err

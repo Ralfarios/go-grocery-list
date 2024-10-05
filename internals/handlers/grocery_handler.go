@@ -57,7 +57,10 @@ func (handler *GroceryHandler) AddGrocery(cmd *cobra.Command, args []string) {
 }
 
 func (handler *GroceryHandler) GetAllGroceries(cmd *cobra.Command, args []string) {
-	groceries, err := handler.groceryService.GetAllGroceries()
+	status, _ := cmd.Flags().GetString("status")
+
+	groceries, err := handler.groceryService.GetAllGroceries(status)
+
 	if err != nil {
 		fmt.Println(err)
 		return

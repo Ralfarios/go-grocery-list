@@ -19,6 +19,7 @@ func init() {
 
 	rootCmd.AddCommand(AddGroceryCmd, GetAllGroceriesCmd, DeleteGroceryCmd, EditGroceryCmd)
 	AddGroceryCmd.Flags().StringP("description", "d", "", "Describe the item that you want to add to the grocery list")
+	GetAllGroceriesCmd.Flags().StringP("status", "s", "", "Determine based on what status, default value is empty")
 }
 
 var AddGroceryCmd = &cobra.Command{
@@ -36,7 +37,13 @@ go-grocery-list add -d "Buy 2 eggs"`,
 var GetAllGroceriesCmd = &cobra.Command{
 	Use:   "list",
 	Short: "See the grocery list items",
-	Long:  `See the all the grocery list items.`,
+	Long: `See the all the grocery list items. You can filter based on its status.
+For example:
+
+go-grocery-list list -s "todo"
+
+There are todo | in-progress | done, if empty, it will show all status.
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		groceryHandler.GetAllGroceries(cmd, args)
 	},
