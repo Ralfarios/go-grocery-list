@@ -45,6 +45,16 @@ func (repository *GroceryRepository) AddGrocery(description string, status strin
 	return newGrocery, nil
 }
 
+func (repository *GroceryRepository) GetAllGroceries() ([]domain.Grocery, error) {
+	groceries, err := repository.loadDb()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return groceries, nil
+}
+
 func (repository *GroceryRepository) loadDb() ([]domain.Grocery, error) {
 	file, err := os.Open(repository.filepath)
 
