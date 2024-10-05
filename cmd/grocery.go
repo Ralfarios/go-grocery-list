@@ -17,8 +17,7 @@ func init() {
 	groceryService = services.NewGroceryService(groceryRepo)
 	groceryHandler = handler.NewGroceryHandler(groceryService)
 
-	rootCmd.AddCommand(AddGroceryCmd)
-
+	rootCmd.AddCommand(AddGroceryCmd, GetAllGroceriesCmd)
 	AddGroceryCmd.Flags().StringP("description", "d", "", "Describe the item that you want to add to the grocery list")
 }
 
@@ -29,8 +28,16 @@ var AddGroceryCmd = &cobra.Command{
 For example:
 
 go-grocery-list add -d "Buy 2 eggs"`,
-
 	Run: func(cmd *cobra.Command, args []string) {
 		groceryHandler.AddGrocery(cmd, args)
+	},
+}
+
+var GetAllGroceriesCmd = &cobra.Command{
+	Use:   "list",
+	Short: "See the grocery list items",
+	Long:  `See the all the grocery list items.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		groceryHandler.GetAllGroceries(cmd, args)
 	},
 }

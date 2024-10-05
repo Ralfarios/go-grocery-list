@@ -23,5 +23,14 @@ func (service *GroceryService) AddGrocery(description string) (*domain.Grocery, 
 	}
 
 	return grocery, nil
+}
 
+func (service *GroceryService) GetAllGroceries() ([]domain.Grocery, error) {
+	groceries, err := service.groceryRepository.GetAllGroceries()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return groceries, nil
 }
