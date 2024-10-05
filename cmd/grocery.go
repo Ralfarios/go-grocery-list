@@ -17,7 +17,7 @@ func init() {
 	groceryService = services.NewGroceryService(groceryRepo)
 	groceryHandler = handler.NewGroceryHandler(groceryService)
 
-	rootCmd.AddCommand(AddGroceryCmd, GetAllGroceriesCmd, DeleteGroceryCmd, EditGroceryCmd)
+	rootCmd.AddCommand(AddGroceryCmd, GetAllGroceriesCmd, DeleteGroceryCmd, EditGroceryCmd, MarkGroceryCmd)
 	GetAllGroceriesCmd.Flags().StringP("status", "s", "", "Determine based on what status, default value is empty")
 }
 
@@ -79,5 +79,21 @@ go-grocery-list update 1 "indomie soto 2 pkgs"
 		description := args[1]
 
 		groceryHandler.UpdateGrocery(cmd, id, description)
+	},
+}
+
+var MarkGroceryCmd = &cobra.Command{
+	Use:   "mark",
+	Short: "Change the grocery list item status from todo to in-progress, or done, or vice-versa",
+	Long: `Change the grocery list item status based on its ID from todo to other status like in-progress, or done, or back to todo.
+For example:
+
+go-grocery-list mark in-progress 5`,
+	Args: cobra.ExactArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		status := args[0]
+		id := args[1]
+
+		groceryHandler.MarkGrocery(cmd, id, status)
 	},
 }
