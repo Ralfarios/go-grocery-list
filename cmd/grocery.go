@@ -17,7 +17,7 @@ func init() {
 	groceryService = services.NewGroceryService(groceryRepo)
 	groceryHandler = handler.NewGroceryHandler(groceryService)
 
-	rootCmd.AddCommand(AddGroceryCmd, GetAllGroceriesCmd, DeleteGroceryCmd)
+	rootCmd.AddCommand(AddGroceryCmd, GetAllGroceriesCmd, DeleteGroceryCmd, EditGroceryCmd)
 	AddGroceryCmd.Flags().StringP("description", "d", "", "Describe the item that you want to add to the grocery list")
 }
 
@@ -53,5 +53,22 @@ go-grocery-list delete 1`,
 	Run: func(cmd *cobra.Command, args []string) {
 		id := args[0]
 		groceryHandler.DeleteGrocery(cmd, id)
+	},
+}
+
+var EditGroceryCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update the description of grocery list item.",
+	Long: `Update the description of grocery list item based on its ID.
+For example:
+
+go-grocery-list update 1 "indomie soto 2 pkgs"
+	`,
+	Args: cobra.ExactArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		id := args[0]
+		description := args[1]
+
+		groceryHandler.UpdateGrocery(cmd, id, description)
 	},
 }
