@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/Ralfarios/go-grocery-list/internals/ports"
@@ -89,4 +90,21 @@ func (handler *GroceryHandler) GetAllGroceries(cmd *cobra.Command, args []string
 	table.SetStyle(simpletable.StyleCompactLite)
 
 	fmt.Println(table.String())
+}
+
+func (handler *GroceryHandler) DeleteGrocery(cmd *cobra.Command, args string) {
+	id, err := strconv.Atoi(args)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = handler.groceryService.DeleteGrocery(id)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("Grocery item with id %X has been deleted", id)
 }

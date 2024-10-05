@@ -25,7 +25,13 @@ func (repository *GroceryRepository) AddGrocery(description string, status strin
 		return nil, err
 	}
 
-	id := len(groceries) + 1
+	var id int
+
+	if len(groceries) < 1 {
+		id = len(groceries) + 1
+	} else {
+		id = groceries[len(groceries)-1].Id + 1
+	}
 
 	newGrocery, err := domain.NewGrocery(id, description, status, nil, nil)
 	if err != nil {
@@ -53,6 +59,28 @@ func (repository *GroceryRepository) GetAllGroceries() ([]domain.Grocery, error)
 	}
 
 	return groceries, nil
+}
+
+func (repository *GroceryRepository) DeleteGrocery(id int) error {
+	groceries, err := repository.loadDb()
+
+	if err != nil {
+		return err
+	}
+
+	newGroceries, isExist := filter(groceries, func(item domain.Grocery) bool {
+		return item.Id != id
+	})
+
+	if !isExist {
+		return errors.New("item not found")
+	}
+
+	if err := repository.saveDb(newGroceries); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (repository *GroceryRepository) loadDb() ([]domain.Grocery, error) {
@@ -84,4 +112,19 @@ func (repository *GroceryRepository) saveDb(groceries []domain.Grocery) error {
 	defer file.Close()
 
 	return json.NewEncoder(file).Encode(groceries)
+}
+
+func filter[T any](values []T, cb func(T) bool) (output []T, isExist bool) {
+	isExist = false
+	output = []T{}
+
+	for _, item := range values {
+		if cb(item) {
+			output = append(output, item)
+		} else {
+			isExist = true
+		}
+	}
+
+	return
 }
