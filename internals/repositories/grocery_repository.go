@@ -57,14 +57,22 @@ func (repository *GroceryRepository) AddGrocery(description string, status strin
 	return newGrocery, nil
 }
 
-func (repository *GroceryRepository) GetAllGroceries() ([]domain.Grocery, error) {
+func (repository *GroceryRepository) GetAllGroceries(status string) ([]domain.Grocery, error) {
 	groceries, err := repository.loadDb()
 
 	if err != nil {
 		return nil, err
 	}
 
-	return groceries, nil
+	if status == "" {
+		return groceries, nil
+	}
+
+	filteredGroceries := findAll(groceries, func(item domain.Grocery, _ int) bool {
+		return item.Status == status
+	})
+
+	return filteredGroceries, nil
 }
 
 func (repository *GroceryRepository) DeleteGrocery(id int) error {
@@ -155,6 +163,16 @@ func (repository *GroceryRepository) saveDb(groceries []domain.Grocery) error {
 	defer file.Close()
 
 	return json.NewEncoder(file).Encode(groceries)
+}
+
+func findAll[T any](values []T, cb func(item T, index int) bool) (output []T) {
+	for idx, item := range values {
+		if cb(item, idx) {
+			output = append(output, item)
+		}
+	}
+
+	return
 }
 
 func find[T any](values []T, cb func(item T, index int) bool) *T {
